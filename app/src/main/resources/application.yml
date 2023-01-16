@@ -1,0 +1,38 @@
+management:
+  endpoints:
+    web:
+      base-path: /
+      exposure:
+        include: health,info
+
+spring:
+  jmx:
+    enabled: false
+  mvc:
+    dispatch-options-request: true
+  datasource:
+    url: jdbc:postgresql://localhost:5432/postgres
+    username: postgres
+    password: password
+  flyway:
+    url: jdbc:postgresql://localhost:5432/postgres
+    user: postgres
+    password: password
+  jpa:  # For debug only
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+
+logging:
+  pattern:
+    level: "%5p %X{}"
+
+server:
+  ssl:
+    key-store: classpath:keystore.p12
+    key-store-password: password
+    key-store-type: pkcs12
+    key-alias: springboot
+    key-password: password
+  port: 8443

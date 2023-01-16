@@ -1,0 +1,48 @@
+plugins {
+	id 'org.springframework.boot' version '3.0.1' apply false
+}
+
+group = 'com.mvpmatch.vending'
+version = '0.0.1-SNAPSHOT'
+
+allprojects {
+	apply plugin: 'io.spring.dependency-management'
+
+	repositories {
+		mavenCentral()
+	}
+
+	dependencyManagement {
+		overriddenByDependencies = false
+
+		dependencies {
+			dependency 'org.postgresql:postgresql:42.3.5'
+			dependency 'org.flywaydb:flyway-core:8.5.10'
+
+			//dependencySet(group: 'org.springdoc', version: '1.6.8') {
+			//	entry 'springdoc-openapi-webflux-ui'
+			//	entry 'springdoc-openapi-security'
+			//}
+
+			//dependencySet(group: "org.mock-server", version: "5.11.2") {
+			//	entry "mockserver-netty"
+			//	entry "mockserver-client-java"
+			//}
+		}
+	}
+}
+
+subprojects {
+	apply plugin: 'java'
+
+	targetCompatibility = sourceCompatibility = '17'
+
+	dependencies {
+		testImplementation 'org.junit.jupiter:junit-jupiter'
+		testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+	}
+
+	test {
+		useJUnitPlatform()
+	}
+}
