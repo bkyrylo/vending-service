@@ -1,4 +1,9 @@
-NOTES:
+###Possible shortcomings:
+Design of the system provides payout of the users' deposit change in full by their coins (deposit is 0 after the purchase), product amount also decreases as a result of purchase,
+but seller should have model with money balance to accumulate funds, obtained from their product selling.
+That was deliberately left out of scope (no mention about the balance in the task), but it is quite clear how to implement.
+
+###NOTES:
 
 Locally service could be run in IDE after the containers, declared in docker-compose.yml, has been started. One of the containers is pgadmin,
 which allow to quickly check db tables modified.
@@ -32,6 +37,8 @@ curl -k -X POST -H "Content-Type: application/json" -d '{"amount": 10}' https://
 - delete the user
 
 curl -k -X DELETE  https://localhost:8443/user -u "test13:testpass1" -v
+
+
 
 
 
