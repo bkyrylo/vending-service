@@ -1,45 +1,40 @@
+NOTES:
 
-====
-docker compose up
-Open http://localhost:5050/browser/
-Set Master Password
-Add new server with Connection host: host.docker.internal
-add Password: Password, click save
-===
-./gradlew bootRun
+Locally service could be run in IDE after the containers, declared in docker-compose.yml, has been started. One of the containers is pgadmin,
+which allow to quickly check db tables modified.
 
+To run db and db admin containers:
+`docker compose up`
 
-curl http://localhost:8080/dummy -u "buyer:buyerpassword" -v (if no SSL)
-curl http://localhost:8080/dummy -H "Authorization: Basic base64string" -v (if no SSL)
+To use pgadmin (optionally):
+- open `http://localhost:5050/browser/`
+- set Master Password
+- add new server with Connection host: `host.docker.internal`
 
-keytool -genkeypair -alias springboot -keyalg RSA -keysize 4096 -storetype PKCS12 -keystore springboot.p12 -validity 3650 -storepass password
-curl -k https://localhost:8443/dummy -u "buyer:buyerpassword" -v (with SSL)
-curl --insecure https://localhost:8443/dummy -u "buyer:buyerpassword" -v (with SSL)
+Service run on SSL port 8443, as it is recommended for authentication type BASIC. Examples of curl commands see below:
+- create users
 
-
-curl -k -X POST -H "Content-Type: application/json" -d '{"username": "test13", "password": "testpass1", "roles": ["seller", "buyer"]}' https://localhost:8443/user -v
-
-curl -k -X POST -H "Content-Type: application/json" -d '{"productName": "Laser", "cost": 10, "amountAvailable": 11}' https://localhost:8443/product -u "test13:testpass1" -v
-
-curl -k -X GET  https://localhost:8443/product/f8edceac-6733-4263-9811-3628b35d9fee -u "test13:testpass1" -v
-
-======
-
-Create users
 curl -k -X POST -H "Content-Type: application/json" -d '{"username": "test13", "password": "testpass1", "roles": ["seller", "buyer"]}' https://localhost:8443/user -v
 curl -k -X POST -H "Content-Type: application/json" -d '{"username": "test15", "password": "testpass1", "roles": ["buyer"]}' https://localhost:8443/user -v
 
-Create product
+- create product
+
 curl -k -X POST -H "Content-Type: application/json" -d '{"productName": "Laser", "cost": 10, "amountAvailable": 11}' https://localhost:8443/product -u "test13:testpass1" -v
 
-Deposit user
+- deposit user
+
 curl -k -X POST -H "Content-Type: application/json" -d '{"depositInCents": 10}' https://localhost:8443/user/deposit -u "test15:testpass1" -v
 
-Buy product
+- buy product
+
 curl -k -X POST -H "Content-Type: application/json" -d '{"amount": 10}' https://localhost:8443/product/{id}/buy -u "test15:testpass1" -v
 
-Delete the user
+- delete the user
+
 curl -k -X DELETE  https://localhost:8443/user -u "test13:testpass1" -v
+
+
+
 
 ================================
 ================================

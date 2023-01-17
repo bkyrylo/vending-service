@@ -15,6 +15,10 @@ allprojects {
 	dependencyManagement {
 		overriddenByDependencies = false
 
+		imports {
+			mavenBom 'org.testcontainers:testcontainers-bom:1.17.2'
+		}
+
 		dependencies {
 			dependency 'org.postgresql:postgresql:42.3.5'
 			dependency 'org.flywaydb:flyway-core:8.5.10'
@@ -24,10 +28,15 @@ allprojects {
 			//	entry 'springdoc-openapi-security'
 			//}
 
-			//dependencySet(group: "org.mock-server", version: "5.11.2") {
-			//	entry "mockserver-netty"
-			//	entry "mockserver-client-java"
-			//}
+			dependencySet(group: "io.rest-assured", version: "5.1.1") {
+				entry "rest-assured"
+				entry "xml-path"
+			}
+
+			dependencySet(group: "org.mock-server", version: "5.13.2") {
+				entry "mockserver-netty"
+				entry "mockserver-client-java"
+			}
 		}
 	}
 }

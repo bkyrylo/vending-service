@@ -9,7 +9,9 @@ import com.mvpmatch.vending.exception.UserUpdateException;
 import com.mvpmatch.vending.repository.RoleRepository;
 import com.mvpmatch.vending.repository.UserRepository;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
+import java.util.UUID;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.userdetails.ReactiveUserDetailsService;
@@ -18,9 +20,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import reactor.core.publisher.Mono;
-
-import java.util.List;
-import java.util.UUID;
 
 @Slf4j
 @AllArgsConstructor
@@ -69,7 +68,7 @@ public class UserService implements ReactiveUserDetailsService {
     }
 
     public Mono<User> findUser(UUID id) {
-        return Mono.fromSupplier(() -> userRepository.findById(id))
+        return Mono.fromSupplier(() -> userRepository.findByIdWithDeposits(id))
                    .flatMap(optional -> optional.map(Mono::just).orElseGet(Mono::empty))
                    .switchIfEmpty(Mono.error(new UserNotFoundException()));
     }
@@ -119,7 +118,8 @@ public class UserService implements ReactiveUserDetailsService {
                    .switchIfEmpty(Mono.error(new UserNotFoundException()))
                    .handle((userFound, sink) -> {
                        try {
-                           if (userFound.getRoles().contains("seller") && !userFound.getProducts().isEmpty()) {
+                           boolean containsSellerRole = userFound.getRoles().stream().map(Role::getRoleName).anyMatch("seller"::equals);
+                           if (containsSellerRole && !userFound.getProducts().isEmpty()) {
                                sink.error(new UserUpdateException("Cannot remove 'seller' role for the user with products"));
                            } else {
                                Set<Role> roles = new HashSet<>(roleRepository.findByRoleNames(roleNames));

@@ -29,7 +29,10 @@ dependencies {
 	//implementation 'org.springdoc:springdoc-openapi-webflux-ui'
 	//implementation 'org.springdoc:springdoc-openapi-security'
 
-
+	testImplementation 'org.testcontainers:postgresql'
+	testImplementation 'io.rest-assured:rest-assured'
+	testImplementation 'org.mock-server:mockserver-client-java'
+	testImplementation 'org.mock-server:mockserver-netty'
 
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	implementation 'org.springframework.security:spring-security-test'

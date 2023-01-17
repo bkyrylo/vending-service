@@ -8,8 +8,6 @@ management:
 spring:
   jmx:
     enabled: false
-  mvc:
-    dispatch-options-request: true
   datasource:
     url: jdbc:postgresql://localhost:5432/postgres
     username: postgres

@@ -12,17 +12,14 @@ import com.mvpmatch.vending.exception.UserNotFoundException;
 import com.mvpmatch.vending.repository.ProductRepository;
 import com.mvpmatch.vending.repository.UserRepository;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
-import java.util.Optional;
+import java.util.UUID;
 import java.util.stream.Collectors;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import reactor.core.publisher.Mono;
-
-import java.util.UUID;
 
 @Slf4j
 @AllArgsConstructor
@@ -93,7 +90,7 @@ public class ProductService {
     }
 
     @Transactional
-    public Mono<PurchaseResponse> buyProduct(UUID id, int amountToBuy, UUID buyerId) {   //TODO beautify
+    public Mono<PurchaseResponse> buyProduct(UUID id, int amountToBuy, UUID buyerId) {   //TODO beautify!!!
         Product product = productRepository.findById(id).orElseThrow(ProductNotFoundException::new);
 
         int amountAvailable = product.getAmountAvailable();

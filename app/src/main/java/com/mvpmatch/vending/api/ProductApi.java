@@ -1,21 +1,17 @@
 package com.mvpmatch.vending.api;
 
 import com.mvpmatch.vending.api.dto.CreateUpdateProductRequest;
-import com.mvpmatch.vending.api.dto.DepositRequest;
 import com.mvpmatch.vending.api.dto.ProductResponse;
 import com.mvpmatch.vending.api.dto.PurchaseRequest;
 import com.mvpmatch.vending.api.dto.PurchaseResponse;
-import com.mvpmatch.vending.api.dto.UserResponse;
-import com.mvpmatch.vending.api.validation.AllowedProductCost;
 import com.mvpmatch.vending.service.ProductService;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
-import java.util.List;
+import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -25,8 +21,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import reactor.core.publisher.Mono;
-
-import java.util.UUID;
 
 
 @RequiredArgsConstructor
