@@ -75,7 +75,6 @@ public class ProductService {
                            result.ifPresentOrElse(product -> {
                                var seller = product.getSeller();
                                if (sellerId.equals(seller.getId())) {
-                                   seller.removeProduct(product);
                                    productRepository.delete(product);
                                    sink.complete();
                                } else {

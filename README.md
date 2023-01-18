@@ -19,26 +19,53 @@ To use pgadmin (optionally):
 Service run on SSL port 8443, as it is recommended for authentication type BASIC. Examples of curl commands see below:
 - create users
 
-curl -k -X POST -H "Content-Type: application/json" -d '{"username": "test13", "password": "testpass1", "roles": ["seller", "buyer"]}' https://localhost:8443/user -v
-curl -k -X POST -H "Content-Type: application/json" -d '{"username": "test15", "password": "testpass1", "roles": ["buyer"]}' https://localhost:8443/user -v
+curl -k -X POST -H "Content-Type: application/json" -d '{"username": "test13", "password": "testpass1", "roles": ["seller", "buyer"]}' https://localhost:8443/user
+curl -k -X POST -H "Content-Type: application/json" -d '{"username": "test15", "password": "testpass1", "roles": ["buyer"]}' https://localhost:8443/user
+
+Users
+
+- update users
+
+curl -k -X PUT -H "Content-Type: application/json" -d '{"password": "testpass1", "roles": ["seller", "buyer"]}' https://localhost:8443/user -u "test15:testpass1"
+
+- deposit users
+
+curl -k -X POST -H "Content-Type: application/json" -d '{"depositInCents": 10}' https://localhost:8443/user/deposit -u "test15:testpass1"
+
+- get users
+
+curl -k -X GET https://localhost:8443/user -u "test15:testpass1"
+
+- reset users
+
+curl -k -X POST https://localhost:8443/user/reset -u "test15:testpass1"
+
+- delete users
+
+curl -k -X DELETE https://localhost:8443/user -u "test15:testpass1"
+
+
+Products
 
 - create product
 
-curl -k -X POST -H "Content-Type: application/json" -d '{"productName": "Laser", "cost": 10, "amountAvailable": 11}' https://localhost:8443/product -u "test13:testpass1" -v
+curl -k -X POST -H "Content-Type: application/json" -d '{"productName": "Laser", "cost": 10, "amountAvailable": 11}' https://localhost:8443/product -u "test13:testpass1"
 
-- deposit user
+- update product
 
-curl -k -X POST -H "Content-Type: application/json" -d '{"depositInCents": 10}' https://localhost:8443/user/deposit -u "test15:testpass1" -v
+curl -k -X PUT -H "Content-Type: application/json" -d '{"productName": "Toy Laser", "cost": 20, "amountAvailable": 11}' https://localhost:8443/product/{id} -u "test13:testpass1"
+
+- get product
+
+curl -k -X GET https://localhost:8443/product/{id}
 
 - buy product
 
-curl -k -X POST -H "Content-Type: application/json" -d '{"amount": 10}' https://localhost:8443/product/{id}/buy -u "test15:testpass1" -v
+curl -k -X POST -H "Content-Type: application/json" -d '{"amount": 2}' https://localhost:8443/product/{id}/buy -u "test15:testpass1"
 
-- delete the user
+- delete product
 
-curl -k -X DELETE  https://localhost:8443/user -u "test13:testpass1" -v
-
-
+curl -k -X DELETE https://localhost:8443/product/{id} "test13:testpass1"
 
 
 
