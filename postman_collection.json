@@ -436,6 +436,52 @@
 					"response": []
 				},
 				{
+					"name": "Deposit \"test15\" user with 5",
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "password",
+									"value": "testpass1",
+									"type": "string"
+								},
+								{
+									"key": "username",
+									"value": "test15",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"type": "text",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\"depositInCents\": 5}"
+						},
+						"url": {
+							"raw": "https://localhost:8443/user/deposit",
+							"protocol": "https",
+							"host": [
+								"localhost"
+							],
+							"port": "8443",
+							"path": [
+								"user",
+								"deposit"
+							]
+						}
+					},
+					"response": []
+				},
+				{
 					"name": "Deposit \"test15\" user with 10",
 					"request": {
 						"auth": {
@@ -482,7 +528,7 @@
 					"response": []
 				},
 				{
-					"name": "Deposit \"test15\" user with 5",
+					"name": "Deposit \"test15\" user with 20",
 					"request": {
 						"auth": {
 							"type": "basic",
@@ -510,7 +556,99 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\"depositInCents\": 5}"
+							"raw": "{\"depositInCents\": 20}"
+						},
+						"url": {
+							"raw": "https://localhost:8443/user/deposit",
+							"protocol": "https",
+							"host": [
+								"localhost"
+							],
+							"port": "8443",
+							"path": [
+								"user",
+								"deposit"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Deposit \"test15\" user with 50",
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "password",
+									"value": "testpass1",
+									"type": "string"
+								},
+								{
+									"key": "username",
+									"value": "test15",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"type": "text",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\"depositInCents\": 50}"
+						},
+						"url": {
+							"raw": "https://localhost:8443/user/deposit",
+							"protocol": "https",
+							"host": [
+								"localhost"
+							],
+							"port": "8443",
+							"path": [
+								"user",
+								"deposit"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Deposit \"test15\" user with 100",
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "password",
+									"value": "testpass1",
+									"type": "string"
+								},
+								{
+									"key": "username",
+									"value": "test15",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"type": "text",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\"depositInCents\": 100}"
 						},
 						"url": {
 							"raw": "https://localhost:8443/user/deposit",

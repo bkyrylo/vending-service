@@ -11,6 +11,7 @@ import com.mvpmatch.vending.exception.UserNotEnoughFundsException;
 import com.mvpmatch.vending.exception.UserNotFoundException;
 import com.mvpmatch.vending.repository.ProductRepository;
 import com.mvpmatch.vending.repository.UserRepository;
+import com.mvpmatch.vending.service.util.ChangeUtils;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -89,7 +90,83 @@ public class ProductService {
     }
 
     @Transactional
-    public Mono<PurchaseResponse> buyProduct(UUID id, int amountToBuy, UUID buyerId) {   //TODO beautify!!!
+    public Mono<PurchaseResponse> buyProduct(UUID id, int amountToBuy, UUID buyerId) {
+        return Mono.fromSupplier(() -> productRepository.findById(id))
+                   .flatMap(optional -> optional.map(Mono::just).orElseGet(Mono::empty))
+                   .switchIfEmpty(Mono.error(new ProductNotFoundException()))
+                   .map(product -> {
+                       if (product.getAmountAvailable() < amountToBuy) {
+                           throw new ProductAmountUnavailableException();
+                       }
+                       return product;
+                   }).zipWith(
+                           Mono.fromSupplier(() -> userRepository.findByIdWithDeposits(buyerId))
+                               .flatMap(optional -> optional.map(Mono::just).orElseGet(Mono::empty))
+                               .switchIfEmpty(Mono.error(new UserNotFoundException()))
+                )
+                   .handle((result, sink) -> {
+                       var product = result.getT1();
+                       var user = result.getT2();
+
+                       int totalCost = product.getCost() * amountToBuy;
+                       int totalDepositSum = user.getDeposits().stream().map(Deposit::getCents).reduce(0, Integer::sum);
+
+                       if (totalCost > totalDepositSum) {
+                           sink.error(new UserNotEnoughFundsException());
+                       } else if (totalCost == totalDepositSum) {
+                           sink.next(buyWithoutChange(product, user, amountToBuy, totalCost));
+                       } else {
+                           int changeInCents = totalDepositSum - totalCost;
+                           sink.next(buyWithChange(product, user, amountToBuy, totalCost, changeInCents));
+                       }
+                   });
+    }
+
+    private PurchaseResponse buyWithoutChange(Product product, User user, int amountToBuy, int totalCost) {
+        product.setAmountAvailable(product.getAmountAvailable() - amountToBuy);
+        productRepository.save(product);
+
+        user.removeAllDeposits();
+        userRepository.save(user);
+
+        return PurchaseResponse.builder()
+                               .productName(product.getProductName())
+                               .spentInCents(totalCost)
+                               .change(List.of())
+                               .build();
+    }
+
+    private PurchaseResponse buyWithChange(Product product, User user, int amountToBuy, int totalCost, int changeInCents) {
+        // Find coin change combination
+        List<List<Deposit>> depositChangeCombinations = new ArrayList<>();
+        ChangeUtils.calculateDepositChange(List.copyOf(user.getDeposits()), changeInCents, new ArrayList<>(), depositChangeCombinations);
+
+        if (!depositChangeCombinations.isEmpty()) {
+            //take any coin combination, e.g. 1st
+            List<Integer> changeCoins = depositChangeCombinations.get(0)
+                                                                 .stream()
+                                                                 .map(Deposit::getCents)
+                                                                 .collect(Collectors.toList());
+
+            product.setAmountAvailable(product.getAmountAvailable() - amountToBuy);
+            productRepository.save(product);
+
+            user.removeAllDeposits();
+            userRepository.save(user);
+
+            return PurchaseResponse.builder()
+                                   .productName(product.getProductName())
+                                   .spentInCents(totalCost)
+                                   .change(changeCoins)
+                                   .build();
+        } else {
+            throw new ChangeReturnException();
+        }
+    }
+
+/*
+    @Transactional
+    public Mono<PurchaseResponse> buyProductOld(UUID id, int amountToBuy, UUID buyerId) {
         Product product = productRepository.findById(id).orElseThrow(ProductNotFoundException::new);
 
         int amountAvailable = product.getAmountAvailable();
@@ -101,6 +178,7 @@ public class ProductService {
 
         User user = userRepository.findByIdWithDeposits(buyerId).orElseThrow(UserNotFoundException::new);
         int totalDepositSum = user.getDeposits().stream().map(Deposit::getCents).reduce(0, Integer::sum);
+
         if (totalCost > totalDepositSum) {
             throw new UserNotEnoughFundsException();
         } else if (totalCost == totalDepositSum) {
@@ -146,28 +224,6 @@ public class ProductService {
         }
 
     }
+*/
 
-    /*
-     * Algorithm to find subsets of a set for a given sum.
-     * deposits - a list of deposits, each one is a deposited coin of 5, 10, 20, 50, 100 cents;
-     * targetSum - the amount of change in cents we would like to obtain deposit subsets for;
-     * partial - partial list, needed for the algorithm;
-     * depositSubsets - resulting list of possible deposits(coins) combinations. This is cents change coin combination.
-     */
-    private void subsetSumOfDeposits(List<Deposit> deposits, int targetSum, List<Deposit> partial, List<List<Deposit>> depositSubsets) {
-        int sum = partial.stream().map(Deposit::getCents).reduce(0, Integer::sum);
-
-        if (sum == targetSum) {
-            depositSubsets.add(partial);
-        } else if (sum < targetSum) {
-            for (int i = 0; i < deposits.size(); i++) {
-                Deposit deposit = deposits.get(i);
-
-                List<Deposit> remaining = deposits.subList(i + 1, deposits.size());
-                List<Deposit> newPartial = new ArrayList<>(partial);
-                newPartial.add(deposit);
-                subsetSumOfDeposits(remaining, targetSum, newPartial, depositSubsets);
-            }
-        }
-    }
 }
